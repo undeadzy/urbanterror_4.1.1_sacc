@@ -26,6 +26,17 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 // q_shared.h -- included first by ALL program modules.
 // A user mod should never modify this file
 
+#ifdef URBAN_TERROR
+  #define PRODUCT_NAME			"ioUrT"
+  #define BASEGAME			"q3ut4"
+  #define CLIENT_WINDOW_TITLE     	"ioUrbanTerror"
+  #define CLIENT_WINDOW_MIN_TITLE 	"ioUrbanTerror console"
+  #define HOMEPATH_NAME_UNIX		".q3a"
+  #define HOMEPATH_NAME_WIN		"Quake3"
+  #define HOMEPATH_NAME_MACOSX		HOMEPATH_NAME_WIN
+  #define GAMENAME_FOR_MASTER		"Quake3Arena"	// must NOT contain whitespaces
+  #define LEGACY_PROTOCOL		1
+#else
 #ifdef STANDALONE
   #define PRODUCT_NAME			"iofoo3"
   #define BASEGAME			"foobar"
@@ -47,6 +58,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
   #define GAMENAME_FOR_MASTER		"Quake3Arena"
   #define LEGACY_PROTOCOL
 #endif
+#endif /* !URBAN_TERROR */
 
 // Heartbeat for dpmaster protocol. You shouldn't change this unless you know what you're doing
 #define HEARTBEAT_FOR_MASTER		"DarkPlaces"
@@ -797,6 +809,11 @@ int		Q_stricmpn (const char *s1, const char *s2, int n);
 char	*Q_strlwr( char *s1 );
 char	*Q_strupr( char *s1 );
 const char	*Q_stristr( const char *s, const char *find);
+
+#ifdef URBAN_TERROR
+char	*Q_strnchr( const char* string, int c, int n );
+char	*Q_strnrchr( const char *string, int c, int n );
+#endif
 
 // buffer size safe library replacements
 void	Q_strncpyz( char *dest, const char *src, int destsize );

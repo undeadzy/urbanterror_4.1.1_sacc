@@ -265,7 +265,11 @@ extern int demo_protocols[];
 #endif
 // override on command line, config files etc.
 #ifndef MASTER_SERVER_NAME
+#  ifdef URBAN_TERROR
+#    define MASTER_SERVER_NAME  "master.urbanterror.info"
+#  else
 #define MASTER_SERVER_NAME	"master.quake3arena.com"
+#  endif
 #endif
 
 #ifndef STANDALONE

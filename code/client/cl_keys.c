@@ -1185,9 +1185,33 @@ void CL_KeyDownEvent( int key, unsigned time )
 		return;
 	}
 
+#ifdef URBAN_TERROR
+	if ( cl_altTabMinimize->integer && keys[K_ALT].down && key == K_TAB )
+	{
+		// Emulate as if CL_ParseBinding was called.
+		Cbuf_AddText("minimize\n");
+		return;
+	}
+#endif
+
 	// console key is hardcoded, so the user can never unbind it
 	if( key == K_CONSOLE || ( keys[K_SHIFT].down && key == K_ESCAPE ) )
 	{
+#ifdef URBAN_TERROR
+		if ( key == K_CONSOLE ) {
+			if ( keys[K_ALT].down ) {
+				Con_SetFrac(1.0f);
+			}
+			else if ( keys[K_SHIFT].down ) {
+				Con_SetFrac(0.25f);
+			}
+			else {
+				Con_SetFrac(0.5f);
+			}
+		} else {
+			Con_SetFrac(0.5f);
+		}
+#endif
 		Con_ToggleConsole_f ();
 		Key_ClearStates ();
 		return;
@@ -1203,6 +1227,16 @@ void CL_KeyDownEvent( int key, unsigned time )
 			key = K_ESCAPE;
 		}
 	}
+
+#ifdef URBAN_TERROR
+	// This is for the hacked download query, whether user trusts data from server
+	// Updated for new API using CL_KeyDownEvent (no need to check for down).
+	if(clc.dlquerying)
+	{
+		CL_DownloadMenu(key);
+		return;
+	}
+#endif
 
 	// escape is always handled special
 	if ( key == K_ESCAPE ) {

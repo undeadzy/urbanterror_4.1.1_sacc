@@ -1149,6 +1149,11 @@ void SV_Frame( int msec ) {
 	// check timeouts
 	SV_CheckTimeouts();
 
+#ifdef URBAN_TERROR
+	// check user info buffer thingy
+	SV_CheckClientUserinfoTimer();
+#endif
+
 	// send messages back to the clients
 	SV_SendClientMessages();
 

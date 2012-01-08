@@ -267,11 +267,18 @@ ifeq ($(wildcard .svn),.svn)
     USE_SVN=1
   endif
 else
+ifeq ($(wildcard .git/logs/refs/remotes/trunk),.git/logs/refs/remotes/trunk)
+  SVN_REV=$(shell LANG=C tail -n 1 .git/logs/refs/remotes/trunk | awk '{print $$7}' | sed -e 's/^r//')
+   ifneq ($(SVN_REV),)
+     VERSION:=$(VERSION)_SVN$(SVN_REV)
+   endif
+else
 ifeq ($(wildcard .git/svn/.metadata),.git/svn/.metadata)
   SVN_REV=$(shell LANG=C git svn info | awk '$$1 == "Revision:" {print $$2; exit 0}')
   ifneq ($(SVN_REV),)
     VERSION:=$(VERSION)_SVN$(SVN_REV)
   endif
+endif
 endif
 endif
 

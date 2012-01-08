@@ -199,6 +199,10 @@ typedef struct {
 	fileHandle_t download;
 	char		downloadTempName[MAX_OSPATH];
 	char		downloadName[MAX_OSPATH];
+#ifdef URBAN_TERROR
+	qboolean	dlquerying;
+#endif
+
 #ifdef USE_CURL
 	qboolean	cURLEnabled;
 	qboolean	cURLUsed;
@@ -208,6 +212,9 @@ typedef struct {
 	CURLM		*downloadCURLM;
 #endif /* USE_CURL */
 	int		sv_allowDownload;
+#ifdef URBAN_TERROR
+	char		mapname[MAX_QPATH];
+#endif
 	char		sv_dlURL[MAX_CVAR_VALUE_STRING];
 	int			downloadNumber;
 	int			downloadBlock;	// block we are waiting for
@@ -388,6 +395,10 @@ extern	cvar_t	*cl_anglespeedkey;
 extern	cvar_t	*cl_sensitivity;
 extern	cvar_t	*cl_freelook;
 
+#ifdef URBAN_TERROR
+extern	cvar_t	*cl_altTabMinimize;
+#endif
+
 extern	cvar_t	*cl_mouseAccel;
 extern	cvar_t	*cl_mouseAccelOffset;
 extern	cvar_t	*cl_mouseAccelStyle;
@@ -414,7 +425,11 @@ extern	cvar_t	*cl_aviMotionJpeg;
 
 extern	cvar_t	*cl_activeAction;
 
+#ifdef URBAN_TERROR
+extern	cvar_t	*cl_autoDownload;
+#else
 extern	cvar_t	*cl_allowDownload;
+#endif
 extern  cvar_t  *cl_downloadMethod;
 extern	cvar_t	*cl_conXOffset;
 extern	cvar_t	*cl_inGameVideo;
@@ -465,6 +480,10 @@ void CL_StopRecord_f(void);
 
 void CL_InitDownloads(void);
 void CL_NextDownload(void);
+
+#ifdef URBAN_TERROR
+void CL_DownloadMenu(int key);
+#endif
 
 void CL_GetPing( int n, char *buf, int buflen, int *pingtime );
 void CL_GetPingInfo( int n, char *buf, int buflen );
@@ -546,6 +565,10 @@ void Con_PageDown( void );
 void Con_Top( void );
 void Con_Bottom( void );
 void Con_Close( void );
+
+#ifdef URBAN_TERROR
+void Con_SetFrac( const float conFrac );
+#endif
 
 void CL_LoadConsoleHistory( void );
 void CL_SaveConsoleHistory( void );

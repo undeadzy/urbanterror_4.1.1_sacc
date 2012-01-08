@@ -703,6 +703,56 @@ int Q_isalpha( int c )
 	return ( 0 );
 }
 
+#ifdef URBAN_TERROR
+char *Q_strnchr(const char *s, int c, int n)
+{
+	/* We allow the caller to find the NUL, but they can only find one */
+	if (s == NULL || n <= 0 || (c == 0 && n > 1)) {
+		return ((char *)NULL);
+	}
+
+	for (;; s++) {
+		if (*s == c) {
+			n--;
+
+		} else if (*s == '\0') {
+			/* Return an error if we find it ourselves */
+			return ((char *)NULL);
+		}
+
+		if (n == 0) {
+			return ((char *)s);
+		}
+	}
+
+	return ((char *)NULL);
+}
+
+char* Q_strnrchr( const char *string, int c, int n )
+{
+	char *s;
+
+	/* We allow the caller to find the NUL, but they can only find one */
+	if (string == NULL || n <= 0 || (c == 0 && n > 1)) {
+		return ((char *)NULL);
+	}
+
+	/* Allow the user to find the NUL (but only once) */
+	for (s = (char *)string + strlen(string); s >= string; s--) {
+		if (*s == c) {
+			n--;
+		}
+
+		if (n == 0) {
+			return s;
+		}
+	}
+
+	return ((char *)NULL);
+}
+
+#endif /* URBAN_TERROR */
+
 qboolean Q_isanumber( const char *s )
 {
 	char *p;

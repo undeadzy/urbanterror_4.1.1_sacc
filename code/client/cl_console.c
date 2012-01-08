@@ -744,10 +744,15 @@ Scroll it up or down
 ==================
 */
 void Con_RunConsole (void) {
+#ifdef URBAN_TERROR
+	// The caller sets finalFrac so we don't set it here
+	if ( ! (Key_GetCatcher( ) & KEYCATCH_CONSOLE) )
+#else
 	// decide on the destination height of the console
 	if ( Key_GetCatcher( ) & KEYCATCH_CONSOLE )
 		con.finalFrac = 0.5;		// half screen
 	else
+#endif
 		con.finalFrac = 0;				// none visible
 	
 	// scroll towards the destination height
@@ -767,6 +772,25 @@ void Con_RunConsole (void) {
 
 }
 
+#ifdef URBAN_TERROR
+// Based on OpenArena but directly edit finalFrac
+/*
+==================
+Con_SetFrac
+==================
+*/
+void Con_SetFrac(const float conFrac)
+{
+	// clamp the cvar value
+	if (conFrac < .1f) {    // don't let the console be hidden
+		con.finalFrac = 0.1f;
+	} else if (conFrac > 1.0f) {
+		con.finalFrac = 1.0f;
+	} else {
+		con.finalFrac = conFrac;
+	}
+}
+#endif
 
 void Con_PageUp( void ) {
 	con.display -= 2;

@@ -28,7 +28,11 @@ cvar_t		*cvar_vars = NULL;
 cvar_t		*cvar_cheats;
 int			cvar_modifiedFlags;
 
+#ifdef URBAN_TERROR
+#  define	MAX_CVARS	2048
+#else
 #define	MAX_CVARS	1024
+#endif
 cvar_t		cvar_indexes[MAX_CVARS];
 int			cvar_numIndexes;
 

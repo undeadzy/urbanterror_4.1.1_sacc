@@ -36,9 +36,16 @@ int demo_protocols[] =
 
 #define MAX_NUM_ARGVS	50
 
+#ifdef URBAN_TERROR
+#  define MIN_DEDICATED_COMHUNKMEGS     96
+#  define MIN_COMHUNKMEGS		256
+#  define DEF_COMHUNKMEGS		256
+#else
 #define MIN_DEDICATED_COMHUNKMEGS 1
 #define MIN_COMHUNKMEGS		56
 #define DEF_COMHUNKMEGS		64
+#endif
+
 #define DEF_COMZONEMEGS		24
 #define DEF_COMHUNKMEGS_S	XSTRING(DEF_COMHUNKMEGS)
 #define DEF_COMZONEMEGS_S	XSTRING(DEF_COMZONEMEGS)
@@ -2640,7 +2647,11 @@ void Com_Init( char *commandLine ) {
 	char	*s;
 	int	qport;
 
+#ifdef URBAN_TERROR
+	Com_Printf( "%s %s [build: %s %s]\n", Q3_VERSION, PLATFORM_STRING, __DATE__, __TIME__ );
+#else
 	Com_Printf( "%s %s %s\n", Q3_VERSION, PLATFORM_STRING, __DATE__ );
+#endif
 
 	if ( setjmp (abortframe) ) {
 		Sys_Error ("Error during initialization");
@@ -2711,7 +2722,11 @@ void Com_Init( char *commandLine ) {
 
   // get dedicated here for proper hunk megs initialization
 #ifdef DEDICATED
+#  ifdef URBAN_TERROR
+	com_dedicated = Cvar_Get ("dedicated", "2", CVAR_INIT);
+#  else
 	com_dedicated = Cvar_Get ("dedicated", "1", CVAR_INIT);
+#  endif
 	Cvar_CheckRange( com_dedicated, 1, 2, qtrue );
 #else
 	com_dedicated = Cvar_Get ("dedicated", "0", CVAR_LATCH);
