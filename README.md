@@ -1,3 +1,6 @@
+undeadzy's version of ioUrbanTerror
+===================================
+
 This based on ioUrbanTerror with the following differences.  This version is
 focused on keeping a minimal set of changes in order to be able to verify it
 easier.
