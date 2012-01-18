@@ -48,6 +48,7 @@ Additions:
 ----------
 
 * Added #ifdef URBAN_TERROR checks around all *.c and *.h changes
+  + Except for a few Makefile changes
 * Uses a Makefile.local
   + Defines BUILD_STANDALONE and URBAN_TERROR in Makefile.local
 * Added LEGACY_PROTOCOL=1 since UrT 4.1.1 is based off of old ioquake3 code
