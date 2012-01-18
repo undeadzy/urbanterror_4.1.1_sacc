@@ -3516,12 +3516,12 @@ const char *FS_LoadedPakChecksums( void ) {
 				continue;
 			}
 		}
-#ifdef URBAN_TERROR_PROPRIETARY_DATA
+#  ifdef URBAN_TERROR_PROPRIETARY_DATA
 		if( !found ) {
 			//Com_Printf("LoadedPakChecksums: pak0 not found, adding fake sum %i\n", pak_checksums[0]);
 			Q_strcat( info, sizeof( info ), va("%i ", pak_checksums[0]) );
 		}
-#endif
+#  endif
 	}
 #endif
 
@@ -3566,7 +3566,7 @@ const char *FS_LoadedPakNames( void ) {
 				continue;
 			}
 		}
-#ifdef URBAN_TERROR_PROPRIETARY_DATA
+#  ifdef URBAN_TERROR_PROPRIETARY_DATA
 		if( !found ) {
 			//Com_Printf("LoadedPakNames: pak0 not found, adding fake name\n");
 			if (*info) {
@@ -3574,7 +3574,7 @@ const char *FS_LoadedPakNames( void ) {
 			}
 			Q_strcat( info, sizeof( info ), "pak0" );
 		}
-#endif
+#  endif
 	}
 #endif
 

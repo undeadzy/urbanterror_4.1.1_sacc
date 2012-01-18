@@ -1,5 +1,7 @@
 # Build Urban Terror (ioUrbanTerror)
 
+VERSION=1.36urt
+
 # This tells ioquake3 to treat this as a standalone game.
 # This is a normal option in vanilla ioquake3
 BUILD_STANDALONE=1
@@ -10,10 +12,7 @@ CFLAGS += -DURBAN_TERROR=1
 
 # Only build the things we need
 BUILD_CLIENT=1
-
-# By default, don't build the server since I only use the client.
-# It has all of the changes so you can build the server if needed.
-BUILD_SERVER=0
+BUILD_SERVER=1
 
 # SMP isn't working yet (dest copy is disabled in the Makefile)
 # Only useful for Mac due to OpenGL library limitations
