@@ -11,6 +11,13 @@ it's id software proprietary data so I cannot include it.  See Makefile.local
 if you want to manually include it.  See the URL at the bottom of this file
 to get it.
 
+You may want to change the Makefile manually to add 'march=native' instead
+of 'march=i586' etc.  The ioquake3 devs didn't make it easy to override that
+in Makefile.local so you have to manually change it.  GCC detects the proper
+architecture with 'native'.  This may add optimizations that aren't available
+in i586 at the expense of depending on newer CPU features that others may
+not have.
+
 Changes from ioUrT:
 -------------------
 
@@ -43,8 +50,6 @@ Additions:
 * Added #ifdef URBAN_TERROR checks around all *.c and *.h changes
 * Uses a Makefile.local
   + Defines BUILD_STANDALONE and URBAN_TERROR in Makefile.local
-  + Only change in Makefile is to use -march=native instead of -march=i586
-    and add support for git revision numbers
 * Added LEGACY_PROTOCOL=1 since UrT 4.1.1 is based off of old ioquake3 code
   - Without this change, you would need to play on servers running the newer
     protocol too.
@@ -55,6 +60,7 @@ Additions:
   - Alt+` means the entire screen
 * Updated the MAX_CMD_BUFFER to 128KiB to match OA and recent ioUrT clients
 * Updated MAX_CVARS to 2048
+* Includes Rambetter's client message buffer exploit fix
 
 Omissions:
 ----------
