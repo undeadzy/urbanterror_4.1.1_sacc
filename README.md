@@ -73,6 +73,8 @@ Omissions:
 * No branding (i.e. ioq3 -> iourt) on the binaries so the Makefile diff is much
   smaller and easier to maintain
   - Small changes in the q_shared.h which is designed for standalone.
+  - Some of the branding is being moved back.  I'm only enabling it in the
+    Makefile.local.
 * Doesn't define DLF_BSPNAME_ONLY because it is never used
 * Doesn't use cl_master because it is handled upstream differently now
 * Doesn't change NET_Sleep because this is handled differently now

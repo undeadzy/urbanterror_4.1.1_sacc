@@ -6,6 +6,9 @@ VERSION=1.36urt
 # This is a normal option in vanilla ioquake3
 BUILD_STANDALONE=1
 
+SERVERBIN=ioUrTded
+CLIENTBIN=ioUrT
+
 # Enable urban terror specific functionality.
 # These are all based on ioUrbanTerror.
 CFLAGS += -DURBAN_TERROR=1
