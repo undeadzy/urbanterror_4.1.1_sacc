@@ -434,7 +434,21 @@ void SV_DirectConnect( netadr_t from ) {
 			}
 		}
 
+#ifdef URBAN_TERROR
+		// From Rambetter's SVN
+		// Note that it is totally possible to flood the console and qconsole.log by being rejected
+		// (high ping, ban, server full, or other) and repeatedly sending a connect packet against the same
+		// challenge.  Prevent this situation by only logging the first time we hit SV_DirectConnect()
+		// for this challenge.
+		if (! challengeptr->connected) {
+			Com_Printf("Client %i connecting with %i challenge ping\n", i, ping);
+		}
+		else {
+			Com_DPrintf("Client %i connecting again with %i challenge ping\n", i, ping);
+		}
+#else
 		Com_Printf("Client %i connecting with %i challenge ping\n", i, ping);
+#endif
 		challengeptr->connected = qtrue;
 	}
 

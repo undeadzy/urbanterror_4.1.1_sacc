@@ -97,5 +97,5 @@ first.  It will now pick up the correct upstream SVN version.
 Original files are from here:
 http://ftp.snt.utwente.nl/pub/games/urbanterror/iourbanterror/source/complete/ioUrbanTerrorSource_2007_12_20.zip
 
-$ sha1sum ioUrbanTerrorSource_2007_12_20.zip
-90f813fb991b762fb289a88e3fceb37ace2fd28c  ioUrbanTerrorSource_2007_12_20.zip
+    $ sha1sum ioUrbanTerrorSource_2007_12_20.zip
+    90f813fb991b762fb289a88e3fceb37ace2fd28c  ioUrbanTerrorSource_2007_12_20.zip
