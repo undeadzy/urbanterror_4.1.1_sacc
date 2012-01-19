@@ -19,7 +19,7 @@ BUILD_SERVER=1
 
 # Since we want to have multiple clients in the same directory,
 # don't use the external renderer which has the same name for all clients.
-USE_RENDERER_DLOPEN=1
+USE_RENDERER_DLOPEN=0
 
 # SMP isn't working yet (dest copy is disabled in the Makefile)
 # Only useful for Mac due to OpenGL library limitations
