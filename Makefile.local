@@ -6,8 +6,8 @@ VERSION=1.36urt
 # This is a normal option in vanilla ioquake3
 BUILD_STANDALONE=1
 
-SERVERBIN=ioUrTded
-CLIENTBIN=ioUrT
+SERVERBIN=ioUrTded-sacc
+CLIENTBIN=ioUrT-sacc
 
 # Enable urban terror specific functionality.
 # These are all based on ioUrbanTerror.
@@ -16,6 +16,10 @@ CFLAGS += -DURBAN_TERROR=1
 # Only build the things we need
 BUILD_CLIENT=1
 BUILD_SERVER=1
+
+# Since we want to have multiple clients in the same directory,
+# don't use the external renderer which has the same name for all clients.
+USE_RENDERER_DLOPEN=1
 
 # SMP isn't working yet (dest copy is disabled in the Makefile)
 # Only useful for Mac due to OpenGL library limitations

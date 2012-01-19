@@ -1,3 +1,20 @@
+undeadzy's version of ioUrbanTerror with Slakin's SACC modifications
+====================================================================
+
+SACC or "Slakin's Advanced Competitive Client" is a set of modifications
+that reportedly improves performance by tweaking some of the values.
+
+This project is the set of SACC changes on top of undeadzy's ioUrT
+which tries to be faithful to the official ioUrT 2007-12-20 while
+supporting the latest ioquake3.
+
+You can read more on SACC here:
+http://sacc.pugbot.com/doku.php?id=start
+
+The patch used to create these changes is from the SWiSH-SACC client.
+None of the undeadzy clients include dmaHD yet because there is a new
+source code drop from the author soon.
+
 undeadzy's version of ioUrbanTerror
 ===================================
 
