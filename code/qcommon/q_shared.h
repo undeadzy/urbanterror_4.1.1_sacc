@@ -31,8 +31,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
   #define BASEGAME			"q3ut4"
   #define CLIENT_WINDOW_TITLE     	"ioUrbanTerror"
   #define CLIENT_WINDOW_MIN_TITLE 	"ioUrbanTerror console"
-  #define HOMEPATH_NAME_UNIX		".q3a"
-  #define HOMEPATH_NAME_WIN		"Quake3"
+  #define HOMEPATH_NAME_UNIX		".ioUrT"
+  #define HOMEPATH_NAME_WIN		"ioUrT"
   #define HOMEPATH_NAME_MACOSX		HOMEPATH_NAME_WIN
   #define GAMENAME_FOR_MASTER		"Quake3Arena"	// must NOT contain whitespaces
   #define LEGACY_PROTOCOL		1
@@ -61,7 +61,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #endif /* !URBAN_TERROR */
 
 // Heartbeat for dpmaster protocol. You shouldn't change this unless you know what you're doing
+#ifdef URBAN_TERROR
+#define HEARTBEAT_FOR_MASTER		"QuakeArena-1"
+#else
 #define HEARTBEAT_FOR_MASTER		"DarkPlaces"
+#endif
 
 #define BASETA				"missionpack"
 
