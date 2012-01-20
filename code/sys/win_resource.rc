@@ -75,7 +75,7 @@ IDI_ICON1               ICON    DISCARDABLE     "misc/quake3.ico"
 
 STRINGTABLE DISCARDABLE 
 BEGIN
-    IDS_STRING1             "Quake3"
+    IDS_STRING1             "ioUrbanTerror"
 END
 
 #endif    // English (U.S.) resources
