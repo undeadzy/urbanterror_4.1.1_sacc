@@ -33,14 +33,9 @@ USE_CODEC_VORBIS=0
 # Broken in UrT or just in general?
 USE_OPENAL=0
 
-# ioUrbanTerror includes part of pak0.pk3 in order to fake being
-# a pure client.  This is proprietary id software data so I
-# cannot include it in the GPLed code.
-#
-# If you want to build it with support for that, get
-# base_pakchecksums.h from ioUrbanTerror and uncomment this.
-#
-#CFLAGS += -DURBAN_TERROR_PROPRIETARY_DATA=1
+# ioUrbanTerror includes checksums from pak0.pk3 in order to fake being
+# a pure client.  This is included in their new github release so
+# I guess it's ok with id.
 
 # Enable verbose builds
 #V=1
