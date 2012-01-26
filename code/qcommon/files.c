@@ -187,14 +187,10 @@ static const unsigned int pak_checksums[] = {
 	977125798u
 };
 
-#if defined(URBAN_TERROR) && defined(URBAN_TERROR_PROPRIETARY_DATA)
+#ifdef URBAN_TERROR
 
-// in ioUrbanTerror, it's including parts of pak0 which is id software
-// proprietary data.  I can't include it in a GPLed source code like this.
+// ioUrbanTerror still includes this so I'm now including it as well.
 //
-// If you want to run on pure servers, you will need to grab basepakheaders.h
-// from ioUrbanTerror and uncomment this section.
-
 // hobbes - really ugly to include those arrays like that...and here
 #  include "basepakheaders.h"
 static int pak_purechecksums[1];
@@ -3517,10 +3513,8 @@ const char *FS_LoadedPakChecksums( void ) {
 			}
 		}
 		if( !found ) {
-#  ifdef URBAN_TERROR_PROPRIETARY_DATA
 			//Com_Printf("LoadedPakChecksums: pak0 not found, adding fake sum %i\n", pak_checksums[0]);
 			Q_strcat( info, sizeof( info ), va("%i ", pak_checksums[0]) );
-#  endif
 		}
 	}
 #endif
@@ -3567,13 +3561,11 @@ const char *FS_LoadedPakNames( void ) {
 			}
 		}
 		if( !found ) {
-#  ifdef URBAN_TERROR_PROPRIETARY_DATA
 			//Com_Printf("LoadedPakNames: pak0 not found, adding fake name\n");
 			if (*info) {
 				Q_strcat(info, sizeof( info ), " " );
 			}
 			Q_strcat( info, sizeof( info ), "pak0" );
-#  endif
 		}
 	}
 #endif
@@ -3618,10 +3610,8 @@ const char *FS_LoadedPakPureChecksums( void ) {
 			}
 		}
 		if( !found ) {
-#  ifdef URBAN_TERROR_PROPRIETARY_DATA
 			//Com_Printf("LoadedPakPureChecksums: pak0 not found, adding fake pure sum %i\n", pak_purechecksums[0]);
 			Q_strcat( info, sizeof( info ), va("%i ", pak_purechecksums[0]) );
-#  endif
 		}
 	}
 #endif
@@ -3914,7 +3904,7 @@ void FS_InitFilesystem( void ) {
 	Q_strncpyz(lastValidGame, fs_gamedirvar->string, sizeof(lastValidGame));
 }
 
-#if defined(URBAN_TERROR) && defined(URBAN_TERROR_PROPRIETARY_DATA)
+#ifdef URBAN_TERROR
 /*
 ================
 FS_CalculateBasePakPureChecksums
@@ -3948,7 +3938,7 @@ void FS_Restart( int checksumFeed ) {
 	// set the checksum feed
 	fs_checksumFeed = checksumFeed;
 
-#if defined(URBAN_TERROR) && defined(URBAN_TERROR_PROPRIETARY_DATA)
+#ifdef URBAN_TERROR
 	// calculate pure checksums for base paks
 	FS_CalculateBasePakPureChecksums( );
 #endif

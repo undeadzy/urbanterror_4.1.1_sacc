@@ -22,11 +22,8 @@ This based on ioUrbanTerror with the following differences.  This version is
 focused on keeping a minimal set of changes in order to be able to verify it
 easier.
 
-NOTE: A big change from ioUrbanTerror is that this does not include the
-partial pak0.pk3 file.  ioUrT uses this to fake being a client.  However,
-it's id software proprietary data so I cannot include it.  See Makefile.local
-if you want to manually include it.  See the URL at the bottom of this file
-to get it.
+NOTE: This now includes the basepakheader.h since FS' latest release also
+has it.
 
 You may want to change the Makefile manually to add 'march=native' instead
 of 'march=i586' etc.  The ioquake3 devs didn't make it easy to override that
@@ -83,8 +80,6 @@ Additions:
 Omissions:
 ----------
 
-* Doesn't include the header to fake the pak0.pk3 checksum
-  - Not legal for me to include it in here
 * Doesn't contain anything OS specific
   + None of the MSVC build files were updated
   + Handling of where Windows looks for files/saves demos is ioq3 default now
