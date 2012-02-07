@@ -5,7 +5,9 @@ VERSION=1.36urt
 # This tells ioquake3 to treat this as a standalone game.
 # This is a normal option in vanilla ioquake3
 BUILD_STANDALONE=1
+BUILD_BASEGAME=1
 
+BASEGAME=q3ut4
 SERVERBIN=ioUrTded-sacc
 CLIENTBIN=ioUrT-sacc
 

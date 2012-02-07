@@ -603,11 +603,7 @@ issues.
 #define	MAX_FILE_HANDLES	64
 
 #ifdef DEDICATED
-#   ifdef URBAN_TERROR
-#	define Q3CONFIG_CFG "server.cfg"
-#   else
 #	define Q3CONFIG_CFG "q3config_server.cfg"
-#   endif
 #else
 #	define Q3CONFIG_CFG "q3config.cfg"
 #endif
