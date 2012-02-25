@@ -55,6 +55,15 @@ ifneq ($(PLATFORM),darwin)
   BUILD_CLIENT_SMP = 0
 endif
 
+# Set these to 'native' in Makfefile.local if you are only compiling this
+# for yourself.
+ifndef I386_ARCH
+  I386_ARCH=i586
+endif
+ifndef ASM_ARCH
+  ASM_ARCH=k8
+endif
+
 #############################################################################
 #
 # If you require a different configuration from the defaults below, create a
@@ -326,7 +335,7 @@ ifneq (,$(findstring "$(PLATFORM)", "linux" "gnu_kfreebsd" "kfreebsd-gnu"))
     HAVE_VM_COMPILED = true
   else
   ifeq ($(ARCH),i386)
-    OPTIMIZEVM = -O3 -march=i586 -fomit-frame-pointer \
+    OPTIMIZEVM = -O3 -march=$(I386_ARCH) -fomit-frame-pointer \
       -funroll-loops -falign-loops=2 -falign-jumps=2 \
       -falign-functions=2 -fstrength-reduce
     OPTIMIZE = $(OPTIMIZEVM) -ffast-math
@@ -512,7 +521,7 @@ ifeq ($(PLATFORM),mingw32)
     HAVE_VM_COMPILED = true
   endif
   ifeq ($(ARCH),x86)
-    OPTIMIZEVM = -O3 -march=i586 -fno-omit-frame-pointer \
+    OPTIMIZEVM = -O3 -march=$(I386_ARCH) -fno-omit-frame-pointer \
       -falign-loops=2 -funroll-loops -falign-jumps=2 -falign-functions=2 \
       -fstrength-reduce
     OPTIMIZE = $(OPTIMIZEVM) -ffast-math
@@ -785,7 +794,7 @@ ifeq ($(PLATFORM),sunos)
     HAVE_VM_COMPILED=true
   else
   ifeq ($(ARCH),i386)
-    OPTIMIZEVM += -march=i586 -fomit-frame-pointer \
+    OPTIMIZEVM += -march=$(I386_ARCH) -fomit-frame-pointer \
       -falign-loops=2 -falign-jumps=2 \
       -falign-functions=2 -fstrength-reduce
     HAVE_VM_COMPILED=true
@@ -2234,7 +2243,7 @@ $(B)/client/%.o: $(ASMDIR)/%.s
 
 # k8 so inline assembler knows about SSE
 $(B)/client/%.o: $(ASMDIR)/%.c
-	$(DO_CC) -march=k8
+	$(DO_CC) -march=$(ASM_ARCH)
 
 $(B)/client/%.o: $(CDIR)/%.c
 	$(DO_CC)
@@ -2288,7 +2297,7 @@ $(B)/ded/%.o: $(ASMDIR)/%.s
 
 # k8 so inline assembler knows about SSE
 $(B)/ded/%.o: $(ASMDIR)/%.c
-	$(DO_CC) -march=k8
+	$(DO_CC) -march=$(ASM_ARCH)
 
 $(B)/ded/%.o: $(SDIR)/%.c
 	$(DO_DED_CC)
