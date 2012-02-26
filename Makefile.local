@@ -15,12 +15,6 @@ CLIENTBIN=ioUrT
 # These are all based on ioUrbanTerror.
 CFLAGS += -DURBAN_TERROR=1
 
-# Workaround silly FTW ban on "hacker" qport.
-# You can use:  +set net_qport 12345 instead if you only use one config on one
-# computer.
-# http://www.ftwgl.com/forums/showthread.php?t=7772
-CFLAGS += -DURBAN_TERROR_QPORT=12345
-
 # Default is i586 and k8 which is better for distributing to broad audiences.
 # If you are only making an executable for yourself, use native instead.
 I386_ARCH=native
@@ -29,7 +23,8 @@ K8_ARCH=native
 # Only build the things we need
 BUILD_CLIENT=1
 BUILD_SERVER=1
-USE_RENDERER_DLOPEN=0
+BUILD_RENDERER_NULL=1
+USE_RENDERER_DLOPEN=1
 
 # SMP isn't working yet (dest copy is disabled in the Makefile)
 # Only useful for Mac due to OpenGL library limitations
