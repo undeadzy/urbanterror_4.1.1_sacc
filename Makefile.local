@@ -18,7 +18,7 @@ CFLAGS += -DURBAN_TERROR=1
 # Default is i586 and k8 which is better for distributing to broad audiences.
 # If you are only making an executable for yourself, use native instead.
 I386_ARCH=native
-K8_ARCH=native
+ASM_ARCH=native
 
 # Only build the things we need
 BUILD_CLIENT=1

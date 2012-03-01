@@ -58,7 +58,7 @@ ifneq ($(PLATFORM),darwin)
   BUILD_CLIENT_SMP = 0
 endif
 
-# Set these to 'native' in Makfefile.local if you are only compiling this
+# Set these to 'native' in Makefile.local if you are only compiling this
 # for yourself.
 ifndef I386_ARCH
   I386_ARCH=i586
