@@ -50,12 +50,15 @@ endif
 ifndef BUILD_MISSIONPACK
   BUILD_MISSIONPACK=
 endif
+ifndef BUILD_RENDERER_NULL
+  BUILD_RENDERER_NULL=
+endif
 
 ifneq ($(PLATFORM),darwin)
   BUILD_CLIENT_SMP = 0
 endif
 
-# Set these to 'native' in Makfefile.local if you are only compiling this
+# Set these to 'native' in Makefile.local if you are only compiling this
 # for yourself.
 ifndef I386_ARCH
   I386_ARCH=i586
@@ -186,6 +189,10 @@ ifndef USE_VOIP
 USE_VOIP=1
 endif
 
+ifndef USE_FREETYPE
+USE_FREETYPE=0
+endif
+
 ifndef USE_INTERNAL_SPEEX
 USE_INTERNAL_SPEEX=1
 endif
@@ -221,6 +228,7 @@ BR=$(BUILD_DIR)/release-$(PLATFORM)-$(ARCH)
 CDIR=$(MOUNT_DIR)/client
 SDIR=$(MOUNT_DIR)/server
 RDIR=$(MOUNT_DIR)/renderer
+RNULLDIR=$(MOUNT_DIR)/renderer_null
 CMDIR=$(MOUNT_DIR)/qcommon
 SDLDIR=$(MOUNT_DIR)/sdl
 ASMDIR=$(MOUNT_DIR)/asm
@@ -257,6 +265,7 @@ ifneq ($(BUILD_CLIENT),0)
     OPENAL_LIBS=$(shell pkg-config --silence-errors --libs openal)
     SDL_CFLAGS=$(shell pkg-config --silence-errors --cflags sdl|sed 's/-Dmain=SDL_main//')
     SDL_LIBS=$(shell pkg-config --silence-errors --libs sdl)
+    FREETYPE_CFLAGS=$(shell pkg-config --silence-errors --cflags freetype2)
   endif
   # Use sdl-config if all else fails
   ifeq ($(SDL_CFLAGS),)
@@ -396,6 +405,10 @@ ifneq (,$(findstring "$(PLATFORM)", "linux" "gnu_kfreebsd" "kfreebsd-gnu"))
     CLIENT_CFLAGS += -I$(SDLHDIR)/include
   endif
 
+  ifeq ($(USE_FREETYPE),1)
+    BASE_CFLAGS += $(FREETYPE_CFLAGS)
+  endif
+
   ifeq ($(ARCH),i386)
     # linux32 make ...
     BASE_CFLAGS += -m32
@@ -448,6 +461,10 @@ ifeq ($(PLATFORM),darwin)
     ifneq ($(USE_CURL_DLOPEN),1)
       CLIENT_LIBS += -lcurl
     endif
+  endif
+
+  ifeq ($(USE_FREETYPE),1)
+    BASE_CFLAGS += $(FREETYPE_CFLAGS)
   endif
 
   ifeq ($(USE_CODEC_VORBIS),1)
@@ -539,6 +556,10 @@ ifeq ($(PLATFORM),mingw32)
   CLIENT_LIBS = -lgdi32 -lole32
   RENDERER_LIBS = -lgdi32 -lole32 -lopengl32
   
+  ifeq ($(USE_FREETYPE),1)
+    BASE_CFLAGS += -Ifreetype2
+  endif
+
   ifeq ($(USE_CURL),1)
     CLIENT_CFLAGS += $(CURL_CFLAGS)
     ifneq ($(USE_CURL_DLOPEN),1)
@@ -846,6 +867,10 @@ endif
 
 TARGETS =
 
+ifeq ($(USE_FREETYPE),1)
+  BASE_CFLAGS += -DBUILD_FREETYPE
+endif
+
 ifndef FULLBINEXT
   FULLBINEXT=.$(ARCH)$(BINEXT)
 endif
@@ -863,6 +888,12 @@ ifneq ($(BUILD_CLIENT),0)
     TARGETS += $(B)/$(CLIENTBIN)$(FULLBINEXT) $(B)/renderer_opengl1_$(SHLIBNAME)
     ifneq ($(BUILD_CLIENT_SMP),0)
       TARGETS += $(B)/renderer_opengl1_smp_$(SHLIBNAME)
+    endif
+    ifneq ($(BUILD_RENDERER_NULL),0)
+      TARGETS += $(B)/renderer_null_$(SHLIBNAME)
+      ifneq ($(BUILD_CLIENT_SMP),0)
+        TARGETS += $(B)/renderer_null_smp_$(SHLIBNAME)
+      endif
     endif
   else
     TARGETS += $(B)/$(CLIENTBIN)$(FULLBINEXT)
@@ -952,6 +983,10 @@ ifeq ($(USE_INTERNAL_JPEG),1)
   BASE_CFLAGS += -I$(JPDIR)
 else
   RENDERER_LIBS += -ljpeg
+endif
+
+ifeq ($(USE_FREETYPE),1)
+  RENDERER_LIBS += -lfreetype
 endif
 
 ifeq ("$(CC)", $(findstring "$(CC)", "clang" "clang++"))
@@ -1169,6 +1204,7 @@ makedirs:
 	@if [ ! -d $(B)/client ];then $(MKDIR) $(B)/client;fi
 	@if [ ! -d $(B)/renderer ];then $(MKDIR) $(B)/renderer;fi
 	@if [ ! -d $(B)/renderersmp ];then $(MKDIR) $(B)/renderersmp;fi
+	@if [ ! -d $(B)/renderer_null ];then $(MKDIR) $(B)/renderer_null;fi
 	@if [ ! -d $(B)/ded ];then $(MKDIR) $(B)/ded;fi
 	@if [ ! -d $(B)/$(BASEGAME) ];then $(MKDIR) $(B)/$(BASEGAME);fi
 	@if [ ! -d $(B)/$(BASEGAME)/cgame ];then $(MKDIR) $(B)/$(BASEGAME)/cgame;fi
@@ -1473,6 +1509,9 @@ else
 	$(B)/client/con_tty.o
 endif
 
+Q3RNULLOBJ = \
+  $(B)/renderer_null/tr_null.o
+
 Q3ROBJ = \
   $(B)/renderer/tr_animation.o \
   $(B)/renderer/tr_backend.o \
@@ -1505,7 +1544,7 @@ Q3ROBJ = \
   $(B)/renderer/tr_world.o \
   \
   $(B)/renderer/sdl_gamma.o
-  
+
 ifneq ($(USE_RENDERER_DLOPEN), 0)
   Q3ROBJ += \
     $(B)/renderer/q_shared.o \
@@ -1741,6 +1780,16 @@ $(B)/renderer_opengl1_smp_$(SHLIBNAME): $(Q3ROBJ) $(Q3POBJ_SMP)
 	$(echo_cmd) "LD $@"
 	$(Q)$(CC) $(CFLAGS) $(SHLIBLDFLAGS) -o $@ $(Q3ROBJ) $(Q3POBJ_SMP) \
 		$(THREAD_LIBS) $(LIBSDLMAIN) $(RENDERER_LIBS) $(LIBS)
+
+$(B)/renderer_null_$(SHLIBNAME): $(Q3RNULLOBJ)
+	$(echo_cmd) "LD $@"
+	$(Q)$(CC) $(CFLAGS) $(SHLIBLDFLAGS) -o $@ $(Q3RNULLOBJ) \
+		$(THREAD_LIBS) $(LIBS)
+
+$(B)/renderer_null_smp_$(SHLIBNAME): $(Q3RNULLOBJ)
+	$(echo_cmd) "LD $@"
+	$(Q)$(CC) $(CFLAGS) $(SHLIBLDFLAGS) -o $@ $(Q3RNULLOBJ) \
+		$(THREAD_LIBS) $(LIBS)
 else
 $(B)/$(CLIENTBIN)$(FULLBINEXT): $(Q3OBJ) $(Q3ROBJ) $(Q3POBJ) $(LIBSDLMAIN)
 	$(echo_cmd) "LD $@"
@@ -2292,6 +2341,10 @@ $(B)/renderer/%.o: $(RDIR)/%.c
 	$(DO_REF_CC)
 
 
+$(B)/renderer_null/%.o: $(RNULLDIR)/%.c
+	$(DO_REF_CC)
+
+
 $(B)/ded/%.o: $(ASMDIR)/%.s
 	$(DO_AS)
 
@@ -2415,7 +2468,7 @@ $(B)/$(MISSIONPACK)/qcommon/%.asm: $(CMDIR)/%.c $(Q3LCC)
 # MISC
 #############################################################################
 
-OBJ = $(Q3OBJ) $(Q3POBJ) $(Q3POBJ_SMP) $(Q3ROBJ) $(Q3DOBJ) \
+OBJ = $(Q3OBJ) $(Q3POBJ) $(Q3POBJ_SMP) $(Q3ROBJ) $(Q3DOBJ) $(Q3RNULLOBJ) \
   $(MPGOBJ) $(Q3GOBJ) $(Q3CGOBJ) $(MPCGOBJ) $(Q3UIOBJ) $(MPUIOBJ) \
   $(MPGVMOBJ) $(Q3GVMOBJ) $(Q3CGVMOBJ) $(MPCGVMOBJ) $(Q3UIVMOBJ) $(MPUIVMOBJ)
 TOOLSOBJ = $(LBURGOBJ) $(Q3CPPOBJ) $(Q3RCCOBJ) $(Q3LCCOBJ) $(Q3ASMOBJ)
@@ -2436,6 +2489,9 @@ ifneq ($(BUILD_CLIENT),0)
 	$(INSTALL) $(STRIP_FLAG) -m 0755 $(BR)/$(CLIENTBIN)$(FULLBINEXT) $(COPYBINDIR)/$(CLIENTBIN)$(FULLBINEXT)
   ifneq ($(USE_RENDERER_DLOPEN),0)
 	$(INSTALL) $(STRIP_FLAG) -m 0755 $(BR)/renderer_opengl1_$(SHLIBNAME) $(COPYBINDIR)/renderer_opengl1_$(SHLIBNAME)
+    ifneq ($(BUILD_RENDERER_NULL),0)
+	  $(INSTALL) $(STRIP_FLAG) -m 0755 $(BR)/renderer_null_$(SHLIBNAME) $(COPYBINDIR)/renderer_null_$(SHLIBNAME)
+    endif
   endif
 endif
 
@@ -2443,6 +2499,9 @@ endif
 ifneq ($(BUILD_CLIENT_SMP),0)
   ifneq ($(USE_RENDERER_DLOPEN),0)
 	$(INSTALL) $(STRIP_FLAG) -m 0755 $(BR)/renderer_opengl1_smp_$(SHLIBNAME) $(COPYBINDIR)/renderer_opengl1_smp_$(SHLIBNAME)
+    ifneq ($(BUILD_RENDERER_NULL),0)
+	  $(INSTALL) $(STRIP_FLAG) -m 0755 $(BR)/renderer_null_smp_$(SHLIBNAME) $(COPYBINDIR)/renderer_null_smp_$(SHLIBNAME)
+    endif
   else
 	$(INSTALL) $(STRIP_FLAG) -m 0755 $(BR)/$(CLIENTBIN)-smp$(FULLBINEXT) $(COPYBINDIR)/$(CLIENTBIN)-smp$(FULLBINEXT)
   endif

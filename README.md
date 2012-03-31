@@ -76,6 +76,14 @@ Additions:
 * Updated the MAX_CMD_BUFFER to 128KiB to match OA and recent ioUrT clients
 * Updated MAX_CVARS to 2048
 * Includes Rambetter's client message buffer exploit fix
+* null renderer for demo message viewing
+  - Start up UrT with +set cl_renderer null +set s_initsound 0
+    and it won't display graphics or play sound.  You should be able
+    to play through demos faster.
+    - You will run into the same old problems at high timescales since
+      the ioq3 print stream allows for skipping messages
+    - q3dmplayer_urt is a better choice for this since it uses sqlite3
+      instead of relying on ioq3's print
 
 Omissions:
 ----------

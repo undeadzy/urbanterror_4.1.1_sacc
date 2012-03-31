@@ -2802,15 +2802,17 @@ void Com_Init( char *commandLine ) {
 #endif
 	}
 
-#ifdef URBAN_TERROR_QPORT
-	// Silly FTW ban on qports containing the digits '1337'.
-	// This makes sure you aren't instant banned due to a random qport.
-	// http://www.ftwgl.com/forums/showthread.php?t=7772
-	qport = URBAN_TERROR_QPORT;
-#else
 	// Pick a random port value
 	Com_RandomBytes( (byte*)&qport, sizeof(int) );
+
+#ifdef URBAN_TERROR_QPORT
+	// FTW's position was updated as far as qport=1337
+	// http://www.ftwgl.com/forums/showthread.php?t=7772
+	if ((qport & 0xffff) == 1337) {
+		qport = 12345;
+	}
 #endif
+
 	Netchan_Init( qport & 0xffff );
 
 	VM_Init();
