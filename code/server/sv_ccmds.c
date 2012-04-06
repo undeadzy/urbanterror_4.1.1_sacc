@@ -1164,7 +1164,6 @@ static void SV_ConSay_f(void) {
 	SV_SendServerCommand(NULL, "chat \"%s\"", text);
 }
 
-#ifdef URBAN_TERROR
 /*
 ==================
 SV_ConTell_f
@@ -1173,7 +1172,7 @@ SV_ConTell_f
 static void SV_ConTell_f(void) {
 	char	*p;
 	char	text[1024];
-	client_t        *cl;
+	client_t	*cl;
 
 	// make sure server is running
 	if ( !com_sv_running->integer ) {
@@ -1203,7 +1202,6 @@ static void SV_ConTell_f(void) {
 
 	SV_SendServerCommand(cl, "chat \"%s\n\"", text);
 }
-#endif
 
 /*
 ==================
@@ -1339,9 +1337,7 @@ void SV_AddOperatorCommands( void ) {
 	Cmd_AddCommand ("killserver", SV_KillServer_f);
 	if( com_dedicated->integer ) {
 		Cmd_AddCommand ("say", SV_ConSay_f);
-#ifdef URBAN_TERROR
 		Cmd_AddCommand ("tell", SV_ConTell_f);
-#endif
 	}
 	
 	Cmd_AddCommand("rehashbans", SV_RehashBans_f);
