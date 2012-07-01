@@ -1,5 +1,7 @@
 #!/bin/sh
 
+# Note: This works in Linux and cygwin
+
 CMD_PREFIX="i586-mingw32msvc i686-w64-mingw32";
 
 if [ "X$CC" = "X" ]; then
