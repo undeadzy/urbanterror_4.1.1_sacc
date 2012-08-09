@@ -38,8 +38,8 @@ USE_CODEC_VORBIS=0
 # Broken in UrT or just in general?
 USE_OPENAL=0
 
-# By default, only the base UrT changes from 4.1.1 are enabled.
-# The following are all extensions which are enabled by default.
+# By default, the base UrT changes plus all extensions are enabled.
+# You can selectively disable the extensions below.
 
 # Rambetter's hacks which work around QVM problems.  Hopefully this isn't needed for 4.2
 #USE_URT_QVM_WORKAROUND=0
