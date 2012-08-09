@@ -703,7 +703,6 @@ int Q_isalpha( int c )
 	return ( 0 );
 }
 
-#ifdef URBAN_TERROR
 char *Q_strnchr(const char *s, int c, int n)
 {
 	/* We allow the caller to find the NUL, but they can only find one */
@@ -750,8 +749,6 @@ char* Q_strnrchr( const char *string, int c, int n )
 
 	return ((char *)NULL);
 }
-
-#endif /* URBAN_TERROR */
 
 qboolean Q_isanumber( const char *s )
 {

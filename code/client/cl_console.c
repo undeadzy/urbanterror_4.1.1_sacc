@@ -744,7 +744,7 @@ Scroll it up or down
 ==================
 */
 void Con_RunConsole (void) {
-#ifdef URBAN_TERROR
+#ifdef URT_OA_CONSOLE
 	// The caller sets finalFrac so we don't set it here
 	if ( ! (Key_GetCatcher( ) & KEYCATCH_CONSOLE) )
 #else
@@ -772,7 +772,7 @@ void Con_RunConsole (void) {
 
 }
 
-#ifdef URBAN_TERROR
+#ifdef URT_OA_CONSOLE
 // Based on OpenArena but directly edit finalFrac
 /*
 ==================
@@ -790,7 +790,7 @@ void Con_SetFrac(const float conFrac)
 		con.finalFrac = conFrac;
 	}
 }
-#endif
+#endif /* URT_OA_CONSOLE */
 
 void Con_PageUp( void ) {
 	con.display -= 2;

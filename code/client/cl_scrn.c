@@ -31,9 +31,7 @@ cvar_t		*cl_graphheight;
 cvar_t		*cl_graphscale;
 cvar_t		*cl_graphshift;
 
-#ifdef URBAN_TERROR
 cvar_t		*cl_drawclock;
-#endif
 
 /*
 ================
@@ -344,7 +342,7 @@ void SCR_DrawDemoRecording( void ) {
 
 	pos = FS_FTell( clc.demofile );
 
-#ifdef URBAN_TERROR
+#ifdef URT_SHORT_RECORD_MSG
 	sprintf( string, "REC: %.10s...: %iKB", clc.demoName, pos / 1024 );
 	SCR_DrawStringExt( 320 - strlen( string ) * 4, 1, 8, string, g_color_table[ColorIndex(COLOR_RED)], qtrue, qfalse );
 #else
@@ -352,6 +350,7 @@ void SCR_DrawDemoRecording( void ) {
 
 	SCR_DrawStringExt( 320 - strlen( string ) * 4, 20, 8, string, g_color_table[7], qtrue, qfalse );
 #endif
+
 }
 
 
@@ -396,7 +395,6 @@ void SCR_DrawVoipMeter( void ) {
 
 
 
-#ifdef URBAN_TERROR
 /*
 =================
 SCR_DrawClock
@@ -411,7 +409,7 @@ static void SCR_DrawClock( void ) {
 		SCR_DrawStringExt( 320 - strlen( string ) * 4, 11, 8, string, g_color_table[ColorIndex(COLOR_CYAN)], qtrue, qfalse );
 	}
 }
-#endif
+
 
 /*
 ===============================================================================
@@ -483,9 +481,7 @@ void SCR_Init( void ) {
 	cl_graphscale = Cvar_Get ("graphscale", "1", CVAR_CHEAT);
 	cl_graphshift = Cvar_Get ("graphshift", "0", CVAR_CHEAT);
 
-#ifdef URBAN_TERROR
 	cl_drawclock = Cvar_Get ("cl_drawclock", "0", CVAR_ARCHIVE);
-#endif
 	scr_initialized = qtrue;
 }
 
@@ -554,9 +550,7 @@ void SCR_DrawScreenField( stereoFrame_t stereoFrame ) {
 			// always supply STEREO_CENTER as vieworg offset is now done by the engine.
 			CL_CGameRendering(stereoFrame);
 			SCR_DrawDemoRecording();
-#ifdef URBAN_TERROR
 			SCR_DrawClock();
-#endif
 #ifdef USE_VOIP
 			SCR_DrawVoipMeter();
 #endif

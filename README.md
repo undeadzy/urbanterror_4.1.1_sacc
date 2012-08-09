@@ -36,7 +36,6 @@ Changes from ioUrT:
 * Whitespace clean thanks to git apply --whitespace=error-all
 * ioUrT disables Mac OSX acceleration but ioquake3 enables it.
   - Recently re-enabled
-* Fix +vstr bug by using mitsubishi's fix from his build
 * alt-tab minimize is enabled using a different cvar
   - Calls "/minimize" since later ioquake3 verisons have support
   - Named cl_altTabMinimize
@@ -44,13 +43,20 @@ Changes from ioUrT:
 Additions:
 ----------
 
-* Added #ifdef URBAN_TERROR checks around all *.c and *.h changes
-  + Except for a few Makefile changes
 * Uses a Makefile.local
-  + Defines BUILD_STANDALONE and URBAN_TERROR in Makefile.local
+  + Defines BUILD_STANDALONE in Makefile.local
 * Added LEGACY_PROTOCOL=1 since UrT 4.1.1 is based off of old ioquake3 code
   - Without this change, you would need to play on servers running the newer
     protocol too.
+
+Extensions:
+-----------
+
+By default, only the base UrT 4.1.1 functionality ported to the latest
+ioquake3 are always included.  These are all extensions that can be enabled
+in Makefile.local
+
+* Fix +vstr bug by using mitsubishi's fix from his build
 * Added OpenArena's handling of the console.
   - Unlike the OA code, this directly edits finalFrac
   - Shift+` means 1/4 of the screen
@@ -59,14 +65,8 @@ Additions:
 * Updated the MAX_CMD_BUFFER to 128KiB to match OA and recent ioUrT clients
 * Updated MAX_CVARS to 2048
 * Includes Rambetter's client message buffer exploit fix
-* null renderer for demo message viewing
-  - Start up UrT with +set cl_renderer null +set s_initsound 0
-    and it won't display graphics or play sound.  You should be able
-    to play through demos faster.
-    - You will run into the same old problems at high timescales since
-      the ioq3 print stream allows for skipping messages
-    - q3dmplayer_urt is a better choice for this since it uses sqlite3
-      instead of relying on ioq3's print
+* Use a short record message rather than the full demo name.
+  - This was based on Mitsubishi's client
 
 Omissions:
 ----------
@@ -103,5 +103,5 @@ first.  It will now pick up the correct upstream SVN version.
 Original files are from here:
 http://ftp.snt.utwente.nl/pub/games/urbanterror/iourbanterror/source/complete/ioUrbanTerrorSource_2007_12_20.zip
 
-    $ sha1sum ioUrbanTerrorSource_2007_12_20.zip
-    90f813fb991b762fb289a88e3fceb37ace2fd28c  ioUrbanTerrorSource_2007_12_20.zip
+    $ sha512sum ioUrbanTerrorSource_2007_12_20.zip
+    7c90fff834a971cd3379a1ba68876cdef42232b90feada069fb2d9103e47c2502e178960454f4c9194f646ced263ba60eea1a89298ae00f6d91748349ceb05a8  ioUrbanTerrorSource_2007_12_20.zip

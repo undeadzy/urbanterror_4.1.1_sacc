@@ -50,9 +50,6 @@ endif
 ifndef BUILD_MISSIONPACK
   BUILD_MISSIONPACK=
 endif
-ifndef BUILD_RENDERER_NULL
-  BUILD_RENDERER_NULL=
-endif
 
 ifneq ($(PLATFORM),darwin)
   BUILD_CLIENT_SMP = 0
@@ -221,6 +218,32 @@ ifndef USE_OLD_VM64
 USE_OLD_VM64=0
 endif
 
+# UrT extensions beyond what is found in UrT 4.1.1
+
+ifndef USE_URT_QVM_WORKAROUND
+USE_URT_QVM_WORKAROUND=1
+endif
+
+ifndef USE_URT_OA_CONSOLE
+USE_URT_OA_CONSOLE=1
+endif
+
+ifndef USE_URT_FTW_QPORT_FIX
+USE_URT_FTW_QPORT_FIX=1
+endif
+
+ifndef USE_URT_VSTR_FIX
+USE_URT_VSTR_FIX=1
+endif
+
+ifndef USE_URT_SHORT_RECORD_MSG
+USE_URT_SHORT_RECORD_MSG=1
+endif
+
+ifndef USE_URT_INCREASE_LIMITS
+USE_URT_INCREASE_LIMITS=1
+endif
+
 #############################################################################
 
 BD=$(BUILD_DIR)/debug-$(PLATFORM)-$(ARCH)
@@ -228,7 +251,6 @@ BR=$(BUILD_DIR)/release-$(PLATFORM)-$(ARCH)
 CDIR=$(MOUNT_DIR)/client
 SDIR=$(MOUNT_DIR)/server
 RDIR=$(MOUNT_DIR)/renderer
-RNULLDIR=$(MOUNT_DIR)/renderer_null
 CMDIR=$(MOUNT_DIR)/qcommon
 SDLDIR=$(MOUNT_DIR)/sdl
 ASMDIR=$(MOUNT_DIR)/asm
@@ -285,18 +307,11 @@ ifeq ($(wildcard .svn),.svn)
     USE_SVN=1
   endif
 else
-ifeq ($(wildcard .git/logs/refs/remotes/trunk),.git/logs/refs/remotes/trunk)
-  SVN_REV=$(shell LANG=C tail -n 1 .git/logs/refs/remotes/trunk | awk '{print $$7}' | sed -e 's/^r//')
-   ifneq ($(SVN_REV),)
-     VERSION:=$(VERSION)_SVN$(SVN_REV)
-   endif
-else
 ifeq ($(wildcard .git/svn/.metadata),.git/svn/.metadata)
   SVN_REV=$(shell LANG=C git svn info | awk '$$1 == "Revision:" {print $$2; exit 0}')
   ifneq ($(SVN_REV),)
     VERSION:=$(VERSION)_SVN$(SVN_REV)
   endif
-endif
 endif
 endif
 
@@ -885,12 +900,6 @@ ifneq ($(BUILD_CLIENT),0)
     ifneq ($(BUILD_CLIENT_SMP),0)
       TARGETS += $(B)/renderer_opengl1_smp_$(SHLIBNAME)
     endif
-    ifneq ($(BUILD_RENDERER_NULL),0)
-      TARGETS += $(B)/renderer_null_$(SHLIBNAME)
-      ifneq ($(BUILD_CLIENT_SMP),0)
-        TARGETS += $(B)/renderer_null_smp_$(SHLIBNAME)
-      endif
-    endif
   else
     TARGETS += $(B)/$(CLIENTBIN)$(FULLBINEXT)
     ifneq ($(BUILD_CLIENT_SMP),0)
@@ -995,6 +1004,31 @@ endif
 
 ifeq ($(USE_LOCAL_HEADERS),1)
   BASE_CFLAGS += -DUSE_LOCAL_HEADERS
+endif
+
+# UrT extensions
+ifeq ($(USE_URT_QVM_WORKAROUND),1)
+  BASE_CFLAGS += -DURT_QVM_WORKAROUND=1
+endif
+
+ifeq ($(USE_URT_OA_CONSOLE),1)
+  BASE_CFLAGS += -DURT_OA_CONSOLE=1
+endif
+
+ifeq ($(USE_URT_FTW_QPORT_FIX),1)
+  BASE_CFLAGS += -DURT_FTW_QPORT_FIX=1
+endif
+
+ifeq ($(USE_URT_VSTR_FIX),1)
+  BASE_CFLAGS += -DURT_VSTR_FIX=1
+endif
+
+ifeq ($(USE_URT_SHORT_RECORD_MSG),1)
+  BASE_CFLAGS += -DURT_SHORT_RECORD_MSG=1
+endif
+
+ifeq ($(USE_URT_INCREASE_LIMITS),1)
+  BASE_CFLAGS += -DURT_INCREASE_LIMITS=1
 endif
 
 ifeq ($(BUILD_STANDALONE),1)
@@ -1111,7 +1145,7 @@ endef
 
 define DO_WINDRES
 $(echo_cmd) "WINDRES $<"
-$(Q)$(WINDRES) -DURBAN_TERROR=1 -i $< -o $@
+$(Q)$(WINDRES) -i $< -o $@
 endef
 
 
@@ -1200,7 +1234,6 @@ makedirs:
 	@if [ ! -d $(B)/client ];then $(MKDIR) $(B)/client;fi
 	@if [ ! -d $(B)/renderer ];then $(MKDIR) $(B)/renderer;fi
 	@if [ ! -d $(B)/renderersmp ];then $(MKDIR) $(B)/renderersmp;fi
-	@if [ ! -d $(B)/renderer_null ];then $(MKDIR) $(B)/renderer_null;fi
 	@if [ ! -d $(B)/ded ];then $(MKDIR) $(B)/ded;fi
 	@if [ ! -d $(B)/$(BASEGAME) ];then $(MKDIR) $(B)/$(BASEGAME);fi
 	@if [ ! -d $(B)/$(BASEGAME)/cgame ];then $(MKDIR) $(B)/$(BASEGAME)/cgame;fi
@@ -1505,9 +1538,6 @@ else
 	$(B)/client/con_tty.o
 endif
 
-Q3RNULLOBJ = \
-  $(B)/renderer_null/tr_null.o
-
 Q3ROBJ = \
   $(B)/renderer/tr_animation.o \
   $(B)/renderer/tr_backend.o \
@@ -1540,7 +1570,7 @@ Q3ROBJ = \
   $(B)/renderer/tr_world.o \
   \
   $(B)/renderer/sdl_gamma.o
-
+  
 ifneq ($(USE_RENDERER_DLOPEN), 0)
   Q3ROBJ += \
     $(B)/renderer/q_shared.o \
@@ -1776,16 +1806,6 @@ $(B)/renderer_opengl1_smp_$(SHLIBNAME): $(Q3ROBJ) $(Q3POBJ_SMP)
 	$(echo_cmd) "LD $@"
 	$(Q)$(CC) $(CFLAGS) $(SHLIBLDFLAGS) -o $@ $(Q3ROBJ) $(Q3POBJ_SMP) \
 		$(THREAD_LIBS) $(LIBSDLMAIN) $(RENDERER_LIBS) $(LIBS)
-
-$(B)/renderer_null_$(SHLIBNAME): $(Q3RNULLOBJ)
-	$(echo_cmd) "LD $@"
-	$(Q)$(CC) $(CFLAGS) $(SHLIBLDFLAGS) -o $@ $(Q3RNULLOBJ) \
-		$(THREAD_LIBS) $(LIBS)
-
-$(B)/renderer_null_smp_$(SHLIBNAME): $(Q3RNULLOBJ)
-	$(echo_cmd) "LD $@"
-	$(Q)$(CC) $(CFLAGS) $(SHLIBLDFLAGS) -o $@ $(Q3RNULLOBJ) \
-		$(THREAD_LIBS) $(LIBS)
 else
 $(B)/$(CLIENTBIN)$(FULLBINEXT): $(Q3OBJ) $(Q3ROBJ) $(Q3POBJ) $(LIBSDLMAIN)
 	$(echo_cmd) "LD $@"
@@ -2337,10 +2357,6 @@ $(B)/renderer/%.o: $(RDIR)/%.c
 	$(DO_REF_CC)
 
 
-$(B)/renderer_null/%.o: $(RNULLDIR)/%.c
-	$(DO_REF_CC)
-
-
 $(B)/ded/%.o: $(ASMDIR)/%.s
 	$(DO_AS)
 
@@ -2464,7 +2480,7 @@ $(B)/$(MISSIONPACK)/qcommon/%.asm: $(CMDIR)/%.c $(Q3LCC)
 # MISC
 #############################################################################
 
-OBJ = $(Q3OBJ) $(Q3POBJ) $(Q3POBJ_SMP) $(Q3ROBJ) $(Q3DOBJ) $(Q3RNULLOBJ) \
+OBJ = $(Q3OBJ) $(Q3POBJ) $(Q3POBJ_SMP) $(Q3ROBJ) $(Q3DOBJ) \
   $(MPGOBJ) $(Q3GOBJ) $(Q3CGOBJ) $(MPCGOBJ) $(Q3UIOBJ) $(MPUIOBJ) \
   $(MPGVMOBJ) $(Q3GVMOBJ) $(Q3CGVMOBJ) $(MPCGVMOBJ) $(Q3UIVMOBJ) $(MPUIVMOBJ)
 TOOLSOBJ = $(LBURGOBJ) $(Q3CPPOBJ) $(Q3RCCOBJ) $(Q3LCCOBJ) $(Q3ASMOBJ)
@@ -2485,9 +2501,6 @@ ifneq ($(BUILD_CLIENT),0)
 	$(INSTALL) $(STRIP_FLAG) -m 0755 $(BR)/$(CLIENTBIN)$(FULLBINEXT) $(COPYBINDIR)/$(CLIENTBIN)$(FULLBINEXT)
   ifneq ($(USE_RENDERER_DLOPEN),0)
 	$(INSTALL) $(STRIP_FLAG) -m 0755 $(BR)/renderer_opengl1_$(SHLIBNAME) $(COPYBINDIR)/renderer_opengl1_$(SHLIBNAME)
-    ifneq ($(BUILD_RENDERER_NULL),0)
-	  $(INSTALL) $(STRIP_FLAG) -m 0755 $(BR)/renderer_null_$(SHLIBNAME) $(COPYBINDIR)/renderer_null_$(SHLIBNAME)
-    endif
   endif
 endif
 
@@ -2495,9 +2508,6 @@ endif
 ifneq ($(BUILD_CLIENT_SMP),0)
   ifneq ($(USE_RENDERER_DLOPEN),0)
 	$(INSTALL) $(STRIP_FLAG) -m 0755 $(BR)/renderer_opengl1_smp_$(SHLIBNAME) $(COPYBINDIR)/renderer_opengl1_smp_$(SHLIBNAME)
-    ifneq ($(BUILD_RENDERER_NULL),0)
-	  $(INSTALL) $(STRIP_FLAG) -m 0755 $(BR)/renderer_null_smp_$(SHLIBNAME) $(COPYBINDIR)/renderer_null_smp_$(SHLIBNAME)
-    endif
   else
 	$(INSTALL) $(STRIP_FLAG) -m 0755 $(BR)/$(CLIENTBIN)-smp$(FULLBINEXT) $(COPYBINDIR)/$(CLIENTBIN)-smp$(FULLBINEXT)
   endif

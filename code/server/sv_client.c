@@ -434,7 +434,7 @@ void SV_DirectConnect( netadr_t from ) {
 			}
 		}
 
-#ifdef URBAN_TERROR
+#ifdef URT_QVM_WORKAROUND
 		// From Rambetter's SVN
 		// Note that it is totally possible to flood the console and qconsole.log by being rejected
 		// (high ping, ban, server full, or other) and repeatedly sending a connect packet against the same
@@ -1488,7 +1488,6 @@ void SV_UserinfoChanged( client_t *cl ) {
 SV_UpdateUserinfo_f
 ==================
 */
-#ifdef URBAN_TERROR
 void SV_UpdateUserinfo_f( client_t *cl ) {
 	if ( (sv_floodProtect->integer) && (cl->state >= CS_ACTIVE) && (svs.time < cl->nextReliableUserTime) ) {
 		Q_strncpyz( cl->userinfobuffer, Cmd_Argv(1), sizeof(cl->userinfobuffer) );
@@ -1497,9 +1496,7 @@ void SV_UpdateUserinfo_f( client_t *cl ) {
 	}
 	cl->userinfobuffer[0]=0;
 	cl->nextReliableUserTime = svs.time + 5000;
-#else
-static void SV_UpdateUserinfo_f( client_t *cl ) {
-#endif
+
 	Q_strncpyz( cl->userinfo, Cmd_Argv(1), sizeof(cl->userinfo) );
 
 	SV_UserinfoChanged( cl );
@@ -1572,7 +1569,7 @@ Also called by bot code
 void SV_ExecuteClientCommand( client_t *cl, const char *s, qboolean clientOK ) {
 	ucmd_t	*u;
 	qboolean bProcessed = qfalse;
-#ifdef URBAN_TERROR
+#ifdef URT_QVM_WORKAROUND
 	int argsFromOneMaxlen;
 	qboolean exploitDetected = qfalse;
 #endif
@@ -1592,8 +1589,9 @@ void SV_ExecuteClientCommand( client_t *cl, const char *s, qboolean clientOK ) {
 		// pass unknown strings to the game
 		if (!u->name && sv.state == SS_GAME && (cl->state == CS_ACTIVE || cl->state == CS_PRIMED)) {
 			Cmd_Args_Sanitize();
-#ifdef URBAN_TERROR
-// This is from Rambetter to prevent an exploit in Urban Terror
+
+#ifdef URT_QVM_WORKAROUND
+			// This is from Rambetter to prevent an exploit in Urban Terror
 			argsFromOneMaxlen = -1;
 			if (Q_stricmp("say", Cmd_Argv(0)) == 0 ||
 				Q_stricmp("say_team", Cmd_Argv(0)) == 0) {
@@ -1651,7 +1649,8 @@ void SV_ExecuteClientCommand( client_t *cl, const char *s, qboolean clientOK ) {
 				SV_SendServerCommand(cl, "print \"Chat dropped due to message length constraints.\n\"");
 				return;
 			}
-#endif
+#endif /* URT_QVM_WORKAROUND */
+
 			VM_Call( gvm, GAME_CLIENT_COMMAND, cl - svs.clients );
 		}
 	}

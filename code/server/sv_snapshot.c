@@ -686,7 +686,6 @@ void SV_SendClientMessages(void)
 	}
 }
 
-#ifdef URBAN_TERROR
 
 void SV_CheckClientUserinfoTimer( void ) {
 	int			i;
@@ -711,4 +710,3 @@ void SV_CheckClientUserinfoTimer( void ) {
 		}
 	}
 }
-#endif

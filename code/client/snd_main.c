@@ -494,12 +494,9 @@ void S_Init( void )
 		Cmd_AddCommand( "s_stop", S_StopAllSounds );
 		Cmd_AddCommand( "s_info", S_SoundInfo );
 
-#ifdef URBAN_TERROR
-/* This doesn't work properly in UrT so disable it by default */
+		/* This doesn't work properly in UrT so disable it by default */
 		cv = Cvar_Get( "s_useOpenAL", "0", CVAR_ARCHIVE );
-#else
-		cv = Cvar_Get( "s_useOpenAL", "1", CVAR_ARCHIVE );
-#endif
+
 		if( cv->integer ) {
 			//OpenAL
 			started = S_AL_Init( &si );

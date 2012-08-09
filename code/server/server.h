@@ -33,7 +33,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #define	MAX_ENT_CLUSTERS	16
 
-#ifdef URBAN_TERROR
+#ifdef URT_QVM_WORKAROUND
 // Part of Rambetter's patch for protecting against an exploit in UrT
 
 // The value below is how many extra characters we reserve for every instance of '$' in a
@@ -61,7 +61,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 // value out of my ass because I don't really know exactly when problems start to happen.
 // This value takes into account increments due to the presence of '$'.
 #  define MAX_SAY_STRLEN 256
-#endif
+#endif /* URT_QVM_WORKAROUND */
 
 #ifdef USE_VOIP
 #define VOIP_QUEUE_LENGTH 64
@@ -164,9 +164,7 @@ typedef struct netchan_buffer_s {
 typedef struct client_s {
 	clientState_t	state;
 	char			userinfo[MAX_INFO_STRING];		// name, etc
-#ifdef URBAN_TERROR
 	char			userinfobuffer[MAX_INFO_STRING]; //used for buffering of user info
-#endif
 
 	char			reliableCommands[MAX_RELIABLE_COMMANDS][MAX_STRING_CHARS];
 	int				reliableSequence;		// last added reliable message, not necesarily sent or acknowledged yet
@@ -199,9 +197,8 @@ typedef struct client_s {
 
 	int				deltaMessage;		// frame last client usercmd message
 	int				nextReliableTime;	// svs.time when another reliable command will be allowed
-#ifdef URBAN_TERROR
 	int				nextReliableUserTime; // svs.time when another userinfo change will be allowed
-#endif
+
 	int				lastPacketTime;		// svs.time when packet was last received
 	int				lastConnectTime;	// svs.time when connection started
 	int				lastSnapshotTime;	// svs.time of last sent snapshot
@@ -397,9 +394,7 @@ int SV_WriteDownloadToClient(client_t *cl , msg_t *msg);
 int SV_SendDownloadMessages(void);
 int SV_SendQueuedMessages(void);
 
-#ifdef URBAN_TERROR
 void SV_UpdateUserinfo_f (client_t *cl );
-#endif
 
 //
 // sv_ccmds.c
@@ -416,9 +411,7 @@ void SV_SendMessageToClient( msg_t *msg, client_t *client );
 void SV_SendClientMessages( void );
 void SV_SendClientSnapshot( client_t *client );
 
-#ifdef URBAN_TERROR
 void SV_CheckClientUserinfoTimer( void );
-#endif
 
 //
 // sv_game.c

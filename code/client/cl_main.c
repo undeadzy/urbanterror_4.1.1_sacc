@@ -81,9 +81,7 @@ cvar_t	*cl_forceavidemo;
 cvar_t	*cl_freelook;
 cvar_t	*cl_sensitivity;
 
-#ifdef URBAN_TERROR
 cvar_t	*cl_altTabMinimize;
-#endif
 
 cvar_t	*cl_mouseAccel;
 cvar_t	*cl_mouseAccelOffset;
@@ -111,11 +109,8 @@ cvar_t	*cl_activeAction;
 
 cvar_t	*cl_motdString;
 
-#ifdef URBAN_TERROR
 cvar_t	*cl_autoDownload;
-#else
-cvar_t	*cl_allowDownload;
-#endif
+
 cvar_t	*cl_conXOffset;
 cvar_t	*cl_inGameVideo;
 
@@ -132,9 +127,8 @@ clientActive_t		cl;
 clientConnection_t	clc;
 clientStatic_t		cls;
 vm_t				*cgvm;
-#ifdef URBAN_TERROR
+
 qboolean allowautodl;
-#endif
 
 // Structure containing functions exported from refresh DLL
 refexport_t	re;
@@ -2153,7 +2147,6 @@ void CL_BeginDownload( const char *localName, const char *remoteName ) {
 	CL_AddReliableCommand(va("download %s", remoteName), qfalse);
 }
 
-#ifdef URBAN_TERROR
 /*
 =================
 CL_FirstDownload
@@ -2197,7 +2190,6 @@ static void CL_FirstDownload(void) {
 		}
 	}
 }
-#endif
 
 /*
 =================
@@ -2241,8 +2233,6 @@ void CL_NextDownload(void)
 			return;
 		}
 
-#ifdef URBAN_TERROR
-		/* XXX FIXME Why does this use a dialog when the answer is a keystroke? */
 		if ( ! ( allowautodl ) ) {
 			Cvar_Set("com_errorMessage",
 			va("To play on this server, you need the map:\n\n"
@@ -2256,7 +2246,6 @@ void CL_NextDownload(void)
 			return;
 		}
 		allowautodl = qfalse;
-#endif
 
 		*s++ = 0;
 		localName = s;
@@ -2264,10 +2253,7 @@ void CL_NextDownload(void)
 			*s++ = 0;
 		else
 			s = localName + strlen(localName); // point at the nul byte
-
-
-#ifdef URBAN_TERROR
-#  ifdef USE_CURL
+#ifdef USE_CURL
 		if(!*clc.sv_dlURL) {
 			Com_Error(ERR_DROP, "Can not autodownload "
 				"missing file(s), because "
@@ -2291,56 +2277,12 @@ void CL_NextDownload(void)
 				clc.sv_dlURL, remoteName));
 			useCURL = qtrue;
 		}
-#  endif /* USE_CURL */
+#endif /* USE_CURL */
 		if(!useCURL) {
 			Com_Error(ERR_DROP, "Auto-download failed "
 				" because Curl is disabled. \n");
 			return;
 		}
-#else
-#ifdef USE_CURL
-		if(!(cl_allowDownload->integer & DLF_NO_REDIRECT)) {
-			if(clc.sv_allowDownload & DLF_NO_REDIRECT) {
-				Com_Printf("WARNING: server does not "
-					"allow download redirection "
-					"(sv_allowDownload is %d)\n",
-					clc.sv_allowDownload);
-			}
-			else if(!*clc.sv_dlURL) {
-				Com_Printf("WARNING: server allows "
-					"download redirection, but does not "
-					"have sv_dlURL set\n");
-			}
-			else if(!CL_cURL_Init()) {
-				Com_Printf("WARNING: could not load "
-					"cURL library\n");
-			}
-			else {
-				CL_cURL_BeginDownload(localName, va("%s/%s",
-					clc.sv_dlURL, remoteName));
-				useCURL = qtrue;
-			}
-		}
-		else if(!(clc.sv_allowDownload & DLF_NO_REDIRECT)) {
-			Com_Printf("WARNING: server allows download "
-				"redirection, but it disabled by client "
-				"configuration (cl_allowDownload is %d)\n",
-				cl_allowDownload->integer);
-		}
-#endif /* USE_CURL */
-		if(!useCURL) {
-			if((cl_allowDownload->integer & DLF_NO_UDP)) {
-				Com_Error(ERR_DROP, "UDP Downloads are "
-					"disabled on your client. "
-					"(cl_allowDownload is %d)",
-					cl_allowDownload->integer);
-				return;	
-			}
-			else {
-				CL_BeginDownload( localName, remoteName );
-			}
-		}
-#endif
 		clc.downloadRestart = qtrue;
 
 		// move over the rest
@@ -2363,11 +2305,7 @@ and determine if we need to download them
 void CL_InitDownloads(void) {
   char missingfiles[1024];
 
-#ifdef URBAN_TERROR
   if ( !(cl_autoDownload->integer & DLF_ENABLE) )
-#else
-  if ( !(cl_allowDownload->integer & DLF_ENABLE) )
-#endif
   {
     // autodownload is disabled on the client
     // but it's possible that some referenced files on the server are missing
@@ -2388,9 +2326,7 @@ void CL_InitDownloads(void) {
 			// if autodownloading is not enabled on the server
 			clc.state = CA_CONNECTED;
 
-#ifdef URBAN_TERROR
 			CL_FirstDownload();
-#endif
 
 			*clc.downloadTempName = *clc.downloadName = 0;
 			Cvar_Set( "cl_downloadName", "" );
@@ -2404,7 +2340,6 @@ void CL_InitDownloads(void) {
 	CL_DownloadsComplete();
 }
 
-#ifdef URBAN_TERROR
 void CL_DownloadMenu(int key)
 {
 	clc.dlquerying = qfalse;
@@ -2419,7 +2354,6 @@ void CL_DownloadMenu(int key)
 		CL_Disconnect(qtrue);
 	}
 }
-#endif
 
 /*
 =================
@@ -3616,9 +3550,7 @@ void CL_Init( void ) {
 	cl_mouseAccel = Cvar_Get ("cl_mouseAccel", "0", CVAR_ARCHIVE);
 	cl_freelook = Cvar_Get( "cl_freelook", "1", CVAR_ARCHIVE );
 
-#ifdef URBAN_TERROR
 	cl_altTabMinimize = Cvar_Get ("cl_altTabMinimize", "1", CVAR_ARCHIVE);
-#endif
 
 	// 0: legacy mouse acceleration
 	// 1: new implementation
@@ -3630,11 +3562,8 @@ void CL_Init( void ) {
 
 	cl_showMouseRate = Cvar_Get ("cl_showmouserate", "0", 0);
 
-#ifdef URBAN_TERROR
 	cl_autoDownload = Cvar_Get ("cl_autoDownload", "1", CVAR_ARCHIVE);
-#else
-	cl_allowDownload = Cvar_Get ("cl_allowDownload", "0", CVAR_ARCHIVE);
-#endif
+
 #ifdef USE_CURL_DLOPEN
 	cl_cURLLib = Cvar_Get("cl_cURLLib", DEFAULT_CURL_LIB, CVAR_ARCHIVE);
 #endif
