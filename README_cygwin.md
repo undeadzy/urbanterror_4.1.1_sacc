@@ -1,7 +1,7 @@
 Building on Cygwin
 ==================
 
-Here is how you can build on Windows 7 64bit using the 32bit build. 
+Here is how you can build on Windows 7 64bit using the 32bit build.
 Building for 64bit is easy for the client/engine but you have to track
 down/compile SDL, libcurl and openal on your own.  With 32bit, you can reuse
 the installer's copy.

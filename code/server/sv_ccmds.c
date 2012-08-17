@@ -1264,6 +1264,7 @@ static void SV_ConTell_f(void) {
 	SV_SendServerCommand(cl, "chat \"%s\n\"", text);
 }
 
+
 /*
 ==================
 SV_Heartbeat_f
@@ -1436,9 +1437,7 @@ void SV_RemoveOperatorCommands( void ) {
 	Cmd_RemoveCommand ("map_restart");
 	Cmd_RemoveCommand ("sectorlist");
 	Cmd_RemoveCommand ("say");
-#  ifdef URBAN_TERROR
 	Cmd_RemoveCommand ("tell");
-#  endif
 #endif
 }
 

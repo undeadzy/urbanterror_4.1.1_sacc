@@ -552,7 +552,7 @@ static void SVC_Status( netadr_t from ) {
 	char	infostring[MAX_INFO_STRING];
 
 	// ignore if we are in single player
-	if ( Cvar_VariableValue( "g_gametype" ) == GT_SINGLE_PLAYER ) {
+	if ( Cvar_VariableValue( "g_gametype" ) == GT_SINGLE_PLAYER || Cvar_VariableValue("ui_singlePlayerActive")) {
 		return;
 	}
 
@@ -1163,10 +1163,8 @@ void SV_Frame( int msec ) {
 	// check timeouts
 	SV_CheckTimeouts();
 
-#ifdef URBAN_TERROR
 	// check user info buffer thingy
 	SV_CheckClientUserinfoTimer();
-#endif
 
 	// send messages back to the clients
 	SV_SendClientMessages();

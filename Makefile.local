@@ -11,10 +11,6 @@ BASEGAME=q3ut4
 SERVERBIN=ioUrTded-sacc
 CLIENTBIN=ioUrT-sacc
 
-# Enable urban terror specific functionality.
-# These are all based on ioUrbanTerror.
-CFLAGS += -DURBAN_TERROR=1
-
 # Default is i586 and k8 which is better for distributing to broad audiences.
 # If you are only making an executable for yourself, use native instead.
 I386_ARCH=native
@@ -23,8 +19,9 @@ ASM_ARCH=native
 # Only build the things we need
 BUILD_CLIENT=1
 BUILD_SERVER=1
-BUILD_RENDERER_NULL=1
-USE_RENDERER_DLOPEN=1
+
+# Consider enabling this if iobumpy is added so you can switch between renderers.
+USE_RENDERER_DLOPEN=0
 
 # Since we want to have multiple clients in the same directory,
 # don't use the external renderer which has the same name for all clients.
@@ -44,6 +41,31 @@ USE_CODEC_VORBIS=0
 
 # Broken in UrT or just in general?
 USE_OPENAL=0
+
+# By default, the base UrT changes plus all extensions are enabled.
+# You can selectively disable the extensions below.
+
+# Rambetter's hacks which work around QVM problems.  Hopefully this isn't needed for 4.2
+#USE_URT_QVM_WORKAROUND=0
+
+# OpenArena has a console where you can open it 1/4, 1/2 or full screen.  This is cosmetic.
+#USE_URT_OA_CONSOLE=0
+
+# FTW will ban anyone using qport = 1337.  It's possible that you can randomly get
+# that value so this makes sure you never have it.
+#USE_URT_FTW_QPORT_FIX=0
+
+# Mitsubishi's fix for vstr
+#USE_URT_VSTR_FIX=0
+
+# Enable a shorter recording message.  The ioquake3 and UrT default is RECORDING: %s %ik
+# This changes it to "REC: %.10s %ik" which is much shorter in the display.
+#USE_URT_SHORT_RECORD_MSG=0
+
+# Enable higher limits than the default UrT
+# This changes the max cmd buffer to 128KiB and max cvars to 2048.
+# These changes are used in 3rd party UrT clients and similar changes are in Open Arena
+#USE_URT_INCREASE_LIMITS=0
 
 # ioUrbanTerror includes checksums from pak0.pk3 in order to fake being
 # a pure client.  This is included in their new github release so

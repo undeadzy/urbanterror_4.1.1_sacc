@@ -24,7 +24,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "q_shared.h"
 #include "qcommon.h"
 
-#ifdef URBAN_TERROR
+#ifdef URT_INCREASE_LIMITS
 #  define	MAX_CMD_BUFFER	128*1024
 #else
 #define	MAX_CMD_BUFFER	16384
@@ -320,7 +320,6 @@ void Cmd_Vstr_f( void ) {
 	Cbuf_InsertText( va("%s\n", v ) );
 }
 
-#ifdef URBAN_TERROR
 /*
 ===============
 Cmd_PVstr_f
@@ -330,7 +329,9 @@ Inserts the current value of a variable as command text
 */
 static void Cmd_PVstr_f( void ) {
 	char *v = NULL;
-	//static qboolean pushed = qfalse;
+#ifndef URT_VSTR_FIX
+	static qboolean pushed = qfalse;
+#endif
 
 	// dunno why five...probably because + keys are handled differently...
 	if (Cmd_Argc () != 5) {
@@ -341,15 +342,21 @@ static void Cmd_PVstr_f( void ) {
 	switch( Cmd_Argv( 0 )[0] ) {
 		case '+':
 			v = Cvar_VariableString( Cmd_Argv( 1 ) );
-			//pushed = qtrue;
+#ifndef URT_VSTR_FIX
+			pushed = qtrue;
+#endif
 			break;
 		case '-':
 			// we check this because otherwise key release would fire even in the console...
-			/* This potentially fixes a bug with a fix from mitsu */
-			//if(pushed) {
+/* This potentially fixes a bug with a fix from mitsu */
+#ifndef URT_VSTR_FIX
+			if(pushed) {
+#endif
 				v = Cvar_VariableString( Cmd_Argv( 2 ) );
-				//pushed = qfalse;
-			//}
+#ifndef URT_VSTR_FIX
+				pushed = qfalse;
+			}
+#endif
 			break;
 		default:
 			Com_Printf("Cmd_PVstr_f: unexpected leading character '%c'\n", Cmd_Argv( 0 )[0]);
@@ -358,7 +365,6 @@ static void Cmd_PVstr_f( void ) {
 		Cbuf_InsertText( va("%s\n", v ) );
 	}
 }
-#endif
 
 /*
 ===============
@@ -907,10 +913,10 @@ void Cmd_Init (void) {
 	Cmd_SetCommandCompletionFunc( "execq", Cmd_CompleteCfgName );
 	Cmd_AddCommand ("vstr",Cmd_Vstr_f);
 	Cmd_SetCommandCompletionFunc( "vstr", Cvar_CompleteCvarName );
-#ifdef URBAN_TERROR
+
 	Cmd_AddCommand ("+vstr",Cmd_PVstr_f);
 	Cmd_AddCommand ("-vstr",Cmd_PVstr_f);
-#endif
+
 	Cmd_AddCommand ("echo",Cmd_Echo_f);
 	Cmd_AddCommand ("wait", Cmd_Wait_f);
 }
